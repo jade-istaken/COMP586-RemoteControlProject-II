@@ -7,6 +7,7 @@ namespace RemoteControlProject
         protected int[] MenuOptionValues {get; set;}
         protected int[] MenuOptionMaxValues {get;}
         protected int SelectedOption {get; set;}
+        public string[] GetMenuOptionPrintableValues();
         public void SelectionIncrement();
         public void SelectionDecrement();
         public void OptionIncrement();
@@ -19,6 +20,7 @@ namespace RemoteControlProject
         public int[] MenuOptionValues {get;set;}
         public int[] MenuOptionMaxValues {get;}
         public int SelectedOption {get; set;}
+        public abstract string[] GetMenuOptionPrintableValues();
         public void SelectionIncrement()
         {
             this.SelectedOption++;
@@ -63,15 +65,42 @@ namespace RemoteControlProject
     internal class SmartMenu : Menu
     {
         public SmartMenu() : base([RemoteControlProject.MenuOptions.Netflix, RemoteControlProject.MenuOptions.TVPlus, RemoteControlProject.MenuOptions.Alexa, RemoteControlProject.MenuOptions.GoogleAssistant],
-        [1,1,1,1])
-        {}
+            [1,1,1,1])
+            {}
+
+        public override string[] GetMenuOptionPrintableValues()
+        {
+            throw new NotImplementedException();
+        }
     }
 
     internal class SettingsMenu : Menu
     {
         public SettingsMenu() : base([RemoteControlProject.MenuOptions.Input, RemoteControlProject.MenuOptions.HDR, RemoteControlProject.MenuOptions.MotionSmoothing, RemoteControlProject.MenuOptions.GameEnhancer, RemoteControlProject.MenuOptions.PurColor, RemoteControlProject.MenuOptions.CrystalProcessor4k], 
-        [Enum.GetNames<Inputs>().Length-1,1,1,1,1,1])
-        {}
+            [Enum.GetNames<Inputs>().Length-1,1,1,1,1,1])
+            {}
+        public override string[] GetMenuOptionPrintableValues()
+        {
+            throw new NotImplementedException();
+        }
+    }
+
+    //Time to implement a factory for these menus as a fun way to use the factory design pattern
+    abstract class MenuCreator
+    {
+        public abstract IMenu CreateMenu(MenuTypes menuType);
+    }
+    internal class TVMenuCreator : MenuCreator
+    {
+        public override IMenu CreateMenu(MenuTypes menuType)
+        {
+            return menuType switch
+            {
+              MenuTypes.Settings => new SmartMenu(),
+              MenuTypes.Smart => new SmartMenu(),
+              _ => throw new Exception("Invalid Menu Type")
+            };
+        }
     }
 
     enum MenuOptions
@@ -93,5 +122,10 @@ namespace RemoteControlProject
         Antenna,
         HDMI1,
         HDMI2
+    }
+    enum MenuTypes
+    {
+        Settings,
+        Smart
     }
 }
