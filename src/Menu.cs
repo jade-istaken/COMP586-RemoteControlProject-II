@@ -1,10 +1,13 @@
 using System;
+using System.ComponentModel.Design;
+using System.Diagnostics.Tracing;
+using System.Security.Cryptography.X509Certificates;
 namespace RemoteControlProject
 {
     internal interface IMenu
     {
         protected MenuOptions[] MenuOptions {get;}
-        protected int[] MenuOptionValues {get; set;}
+        protected int[] MenuOptionValues {get;}
         protected int[] MenuOptionMaxValues {get;}
         protected int SelectedOption {get; set;}
         public string[] GetMenuOptionPrintableValues();
@@ -37,7 +40,7 @@ namespace RemoteControlProject
                 this.SelectedOption = this.MenuOptions.Length-1;
             }
         }
-        public void OptionIncrement()
+        public virtual void OptionIncrement()
         {
             this.MenuOptionValues[this.SelectedOption]++;
             if (this.MenuOptionValues[this.SelectedOption] > MenuOptionMaxValues[this.SelectedOption])
@@ -45,7 +48,7 @@ namespace RemoteControlProject
                 this.MenuOptionValues[this.SelectedOption] = 0;
             }
         }
-        public void OptionDecrement()
+        public virtual void OptionDecrement()
         {
             this.MenuOptionValues[this.SelectedOption]--;
             if (this.MenuOptionValues[this.SelectedOption] < 0)
@@ -60,17 +63,54 @@ namespace RemoteControlProject
             MenuOptionValues = new int[MenuOptions.Length];
             MenuOptionMaxValues = maxValues;
         }
+
+        public void Reset()
+        {
+            foreach (var item in MenuOptionValues)
+            {
+                MenuOptionValues[item] = 0;
+            }
+        }
     }
 
     internal class SmartMenu : Menu
     {
-        public SmartMenu() : base([RemoteControlProject.MenuOptions.Netflix, RemoteControlProject.MenuOptions.TVPlus, RemoteControlProject.MenuOptions.Alexa, RemoteControlProject.MenuOptions.GoogleAssistant],
+        public SmartMenu() : base([RemoteControlProject.MenuOptions.Netflix, RemoteControlProject.MenuOptions.TVPlus, RemoteControlProject.MenuOptions.AmazonPrime, RemoteControlProject.MenuOptions.HBOMax],
             [1,1,1,1])
             {}
 
         public override string[] GetMenuOptionPrintableValues()
         {
-            throw new NotImplementedException();
+            return [.. this.MenuOptionValues.Select(val => val == 1 ? "Enabled" : "Disabled")];
+        }
+        //I want to override the base option increment/decrement functions so that only one streaming service can be open at a time
+        public override void OptionIncrement()
+        {
+            base.OptionDecrement();
+            if (base.MenuOptionValues[SelectedOption] == 1)
+            {
+                foreach (var item in base.MenuOptionValues)
+                {
+                    if (item != SelectedOption)
+                    {
+                        MenuOptionValues[item] = 0;    
+                    }
+                }
+            }
+        }
+        public override void OptionDecrement()
+        {
+            base.OptionDecrement();
+            if (base.MenuOptionValues[SelectedOption] == 1)
+            {
+                foreach (var item in base.MenuOptionValues)
+                {
+                    if (item != SelectedOption)
+                    {
+                        MenuOptionValues[item] = 0;    
+                    }
+                }
+            }
         }
     }
 
@@ -78,10 +118,13 @@ namespace RemoteControlProject
     {
         public SettingsMenu() : base([RemoteControlProject.MenuOptions.Input, RemoteControlProject.MenuOptions.HDR, RemoteControlProject.MenuOptions.MotionSmoothing, RemoteControlProject.MenuOptions.GameEnhancer, RemoteControlProject.MenuOptions.PurColor, RemoteControlProject.MenuOptions.CrystalProcessor4k], 
             [Enum.GetNames<Inputs>().Length-1,1,1,1,1,1])
-            {}
+            {} // I want the inputs to have a max value of just, however many versions of it there are so that if I add more inputs it adapts
         public override string[] GetMenuOptionPrintableValues()
         {
-            throw new NotImplementedException();
+            int inputsIndex = this.MenuOptions.IndexOf(RemoteControlProject.MenuOptions.Input);
+            string[] retval = [.. this.MenuOptionValues.Select(val => val == 1 ? "Enabled" : "Disabled")];
+            retval[inputsIndex] = ((Inputs)MenuOptionValues[inputsIndex]).ToString(); 
+            return retval;
         }
     }
 
@@ -103,10 +146,36 @@ namespace RemoteControlProject
         }
     }
 
+    internal class MenuFacade //A Facade for holding all the menus that the tv will have
+    {
+        protected IMenu _smartMenu;
+        protected IMenu _settingsMenu;
+        protected MenuTypes ActiveMenu {get;set;}
+        protected Boolean MenuOpen {get;set;}
+        public MenuFacade()
+        {
+            MenuCreator menuCreator = new TVMenuCreator();
+            _settingsMenu = menuCreator.CreateMenu(MenuTypes.Settings);
+            _smartMenu = menuCreator.CreateMenu(MenuTypes.Smart);
+        }
+        
+        public void OpenMenu(MenuTypes menuType)
+        {
+            this.ActiveMenu = menuType;
+            this.MenuOpen = true;
+        }
+        public void CloseMenu()
+        {
+            MenuOpen = false;
+        }
+    }
+
     enum MenuOptions
     {
         Netflix,
         TVPlus,
+        AmazonPrime,
+        HBOMax,
         Alexa,
         GoogleAssistant,
         CrystalProcessor4k,
