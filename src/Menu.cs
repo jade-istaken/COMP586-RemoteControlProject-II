@@ -1,6 +1,7 @@
 using System;
 using System.ComponentModel.Design;
 using System.Diagnostics.Tracing;
+using System.Net.Http.Headers;
 using System.Security.Cryptography.X509Certificates;
 namespace RemoteControlProject
 {
@@ -9,12 +10,14 @@ namespace RemoteControlProject
         protected MenuOptions[] MenuOptions {get;}
         protected int[] MenuOptionValues {get;}
         protected int[] MenuOptionMaxValues {get;}
-        protected int SelectedOption {get; set;}
+        public int SelectedOption {get; set;}
         public string[] GetMenuOptionPrintableValues();
+        public string[] GetMenuOptionPrintables();
         public void SelectionIncrement();
         public void SelectionDecrement();
         public void OptionIncrement();
         public void OptionDecrement();
+        public void Reset();
     }
 
     internal abstract class Menu : IMenu
@@ -24,6 +27,15 @@ namespace RemoteControlProject
         public int[] MenuOptionMaxValues {get;}
         public int SelectedOption {get; set;}
         public abstract string[] GetMenuOptionPrintableValues();
+        public string[] GetMenuOptionPrintables()
+        {
+            string[] retval = new string[MenuOptions.Length];
+            for (int i = 0; i < MenuOptions.Length; i++)
+            {
+                retval[i] = MenuOptions[i].ToString();
+            }
+            return retval;
+        }
         public void SelectionIncrement()
         {
             this.SelectedOption++;
@@ -89,11 +101,11 @@ namespace RemoteControlProject
             base.OptionDecrement();
             if (base.MenuOptionValues[SelectedOption] == 1)
             {
-                foreach (var item in base.MenuOptionValues)
+                for (int i=0; i <MenuOptionValues.Length; i++)
                 {
-                    if (item != SelectedOption)
+                    if (i != SelectedOption)
                     {
-                        MenuOptionValues[item] = 0;    
+                        MenuOptionValues[i] = 0;    
                     }
                 }
             }
@@ -103,11 +115,11 @@ namespace RemoteControlProject
             base.OptionDecrement();
             if (base.MenuOptionValues[SelectedOption] == 1)
             {
-                foreach (var item in base.MenuOptionValues)
+                for (int i=0; i <MenuOptionValues.Length; i++)
                 {
-                    if (item != SelectedOption)
+                    if (i != SelectedOption)
                     {
-                        MenuOptionValues[item] = 0;    
+                        MenuOptionValues[i] = 0;    
                     }
                 }
             }
@@ -148,25 +160,67 @@ namespace RemoteControlProject
 
     internal class MenuFacade //A Facade for holding all the menus that the tv will have
     {
-        protected IMenu _smartMenu;
-        protected IMenu _settingsMenu;
+        protected IMenu[] menus;
         protected MenuTypes ActiveMenu {get;set;}
-        protected Boolean MenuOpen {get;set;}
+        protected bool IsMenuOpen {get;set;}
+        public int SelectedOption
+        {
+            get => menus[(int)ActiveMenu].SelectedOption;
+        }
+        public string[] MenuPrintableOptions
+        {
+            get => menus[(int)ActiveMenu].GetMenuOptionPrintables();
+        }
+        public string[] MenuPrintableValues
+        {
+            get => menus[(int)ActiveMenu].GetMenuOptionPrintableValues();
+        }
         public MenuFacade()
         {
             MenuCreator menuCreator = new TVMenuCreator();
-            _settingsMenu = menuCreator.CreateMenu(MenuTypes.Settings);
-            _smartMenu = menuCreator.CreateMenu(MenuTypes.Smart);
+            menus = [menuCreator.CreateMenu(MenuTypes.Settings), menuCreator.CreateMenu(MenuTypes.Smart)];
         }
-        
         public void OpenMenu(MenuTypes menuType)
         {
-            this.ActiveMenu = menuType;
-            this.MenuOpen = true;
+            ActiveMenu = menuType;
+            IsMenuOpen = true;
         }
         public void CloseMenu()
         {
-            MenuOpen = false;
+            IsMenuOpen = false;
+        }
+
+        public void SelectionIncrement()
+        {
+            if (IsMenuOpen)
+            {
+                menus[(int)ActiveMenu].SelectionIncrement();
+            }
+        }
+        public void SelectionDecrement()
+        {
+            if (IsMenuOpen)
+            {
+                menus[(int)ActiveMenu].SelectionDecrement();
+            }
+        }
+        public void OptionIncrement()
+        {
+            if (IsMenuOpen)
+            {
+                menus[(int)ActiveMenu].OptionIncrement();
+            }
+        }
+        public void OptionDecrement()
+        {
+            if (IsMenuOpen)
+            {
+                menus[(int)ActiveMenu].OptionDecrement();
+            }
+        }
+        public void TvTime()
+        {
+            menus[(int)MenuTypes.Smart].Reset();
         }
     }
 
