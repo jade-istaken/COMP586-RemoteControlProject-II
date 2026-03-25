@@ -1,8 +1,3 @@
-using System;
-using System.ComponentModel.Design;
-using System.Diagnostics.Tracing;
-using System.Net.Http.Headers;
-using System.Security.Cryptography.X509Certificates;
 namespace RemoteControlProject
 {
     internal interface IMenu
