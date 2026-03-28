@@ -71,7 +71,7 @@ namespace RemoteControlProject
             MenuOptionMaxValues = maxValues;
         }
 
-        public void Reset()
+        public virtual void Reset()
         {
             foreach (var item in MenuOptionValues)
             {
@@ -132,6 +132,10 @@ namespace RemoteControlProject
             string[] retval = [.. this.MenuOptionValues.Select(val => val == 1 ? "Enabled" : "Disabled")];
             retval[inputsIndex] = ((Inputs)MenuOptionValues[inputsIndex]).ToString(); 
             return retval;
+        }
+        public override void Reset()
+        {
+            MenuOptionValues[0] = 0;
         }
     }
 
@@ -216,6 +220,15 @@ namespace RemoteControlProject
         public void TvTime()
         {
             menus[(int)MenuTypes.Smart].Reset();
+        }
+
+        public string[] SettingsValues()
+        {
+            return menus[(int)MenuTypes.Settings].GetMenuOptionPrintableValues();
+        }
+        public string[] SmartValues()
+        {
+            return menus[(int)MenuTypes.Smart].GetMenuOptionPrintableValues();
         }
     }
 
