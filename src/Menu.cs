@@ -73,9 +73,9 @@ namespace RemoteControlProject
 
         public virtual void Reset()
         {
-            foreach (var item in MenuOptionValues)
+            for (int i = 0; i < MenuOptionValues.Length; i++)
             {
-                MenuOptionValues[item] = 0;
+                MenuOptionValues[i]=0;
             }
         }
     }
