@@ -12,7 +12,7 @@ namespace RemoteControlProject
         public EventHandler<RemoteControlProject.ButtonType>? ButtonPressed;
         private readonly System.Timers.Timer inputTimer;
 
-        private void StateReset(object sender, ElapsedEventArgs e)
+        private void StateReset(object? sender, ElapsedEventArgs e)
         {
             this.lastPressedButton = ButtonType.None;
         }
