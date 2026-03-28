@@ -150,7 +150,7 @@ namespace RemoteControlProject
         {
             return menuType switch
             {
-              MenuTypes.Settings => new SmartMenu(),
+              MenuTypes.Settings => new SettingsMenu(),
               MenuTypes.Smart => new SmartMenu(),
               _ => throw new Exception("Invalid Menu Type")
             };
@@ -161,7 +161,7 @@ namespace RemoteControlProject
     {
         protected IMenu[] menus;
         protected MenuTypes ActiveMenu {get;set;}
-        protected bool IsMenuOpen {get;set;}
+        public bool IsMenuOpen {get;set;}
         public int SelectedOption
         {
             get => menus[(int)ActiveMenu].SelectedOption;
@@ -179,10 +179,17 @@ namespace RemoteControlProject
             MenuCreator menuCreator = new TVMenuCreator();
             menus = [menuCreator.CreateMenu(MenuTypes.Settings), menuCreator.CreateMenu(MenuTypes.Smart)];
         }
-        public void OpenMenu(MenuTypes menuType)
+        public void MenuToggle(MenuTypes menuType)
         {
-            ActiveMenu = menuType;
-            IsMenuOpen = true;
+            if (ActiveMenu == menuType && IsMenuOpen)
+            {
+                IsMenuOpen = false;
+            }
+            else
+            {
+                ActiveMenu = menuType;
+                IsMenuOpen = true;    
+            }
         }
         public void CloseMenu()
         {
