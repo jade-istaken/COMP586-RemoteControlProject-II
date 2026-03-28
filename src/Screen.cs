@@ -1,3 +1,4 @@
+using System.Collections;
 using System.Timers;
 namespace RemoteControlProject
 {
@@ -164,34 +165,99 @@ namespace RemoteControlProject
                     _channelTimoutTimer.Stop();
                     _channelTimoutTimer.Start();
                     break;
+                case ButtonType.Menu:
+                    _menus.MenuToggle(MenuTypes.Smart);
+                    break;
+                case ButtonType.Settings:
+                    _menus.MenuToggle(MenuTypes.Settings);
+                    break;
+                case ButtonType.DPadLeft:
+                    _menus.SelectionDecrement();
+                    break;
+                case ButtonType.DPadRight:
+                    _menus.SelectionIncrement();
+                    break;
+                case ButtonType.DPadUp:
+                    _menus.OptionIncrement();
+                    break;
+                case ButtonType.DPadDown:
+                    _menus.OptionDecrement();
+                    break;
                 }
+                if (_interimChannelValue.Length >= 3)
+            {
+                SetChannel(ushort.Parse(_interimChannelValue));
+                _interimChannelValue = "";
+            }
             }
         }
         public void PrintState()
         {
             string[] settingsValues = _menus.SettingsValues();
             string[] smartValues = _menus.SmartValues();
+            int tvLength = 68;
 
             if (_isPowered)
-            {
-                Console.WriteLine("                       O    O");
-                Console.WriteLine("                        \\  /");
-                Console.WriteLine(" ________________________\\/________________________");
+            {   
+                Console.WriteLine("                               O    O");
+                Console.WriteLine("                                \\  /");
+                Console.WriteLine(" ________________________________\\/________________________________");
                 Console.Write("/");
-                    if(smartValues.All(x => x == "Disabled")&settingsValues[0]=="Antenna"){Console.WriteLine("Channel:{0}                                       \\", this.Channel.ToString().PadRight(3));}
-                    else {Console.WriteLine("                                                  \\");}
+                    if(smartValues.All(x => x == "Disabled")&settingsValues[0]=="Antenna"){Console.WriteLine("Channel:{0}"+"\\".PadLeft(tvLength-12), this.Channel.ToString().PadRight(3));}
+                    else {Console.WriteLine("\\".PadLeft(tvLength-1));}
+                Console.WriteLine("|Volume:{0}|",(this._isMuted)? "MUTED".PadRight(43): this.Volume.ToString().PadRight(59));
+                if(smartValues.All(x => x == "Disabled")){Console.WriteLine("|Input:{0}|",settingsValues[0].PadRight(60));}
+                else
+                {
+                    Console.WriteLine("|Watching {0}|",((MenuOptions)smartValues.IndexOf("Enabled")).ToString().PadRight(tvLength-11)); //Console.Write(((MenuOptions)smartValues.IndexOf("Enabled")).ToString().Length);
+                }
+                Console.WriteLine("|Captions: {0}|",_captionsEnabled.ToString().PadRight(56));
+                Console.WriteLine("|HDR: {0}|", settingsValues[1].PadRight(61));
+                Console.WriteLine("|Motion Smoothing: {0}|", settingsValues[2].PadRight(48));
+                Console.WriteLine("|Game Enhancer: {0}|", settingsValues[3].PadRight(51));
+                Console.WriteLine("|PurColor: {0}|", settingsValues[4].PadRight(56));
+                Console.WriteLine("|Crystal Processor 4k: {0}|", settingsValues[5].PadRight(44));
+                if (_menus.IsMenuOpen)
+                {
+                    Console.Write("|"); WriteMenuOption();Console.WriteLine("|".PadLeft(tvLength-(String.Join(" ", _menus.MenuPrintableOptions).Length)-1));
+                }
+                else{Console.WriteLine("|" + "|".PadLeft(tvLength-1));}
+                Console.WriteLine("\\__________________________________________________________________/");
             }
             else
             {
-                Console.WriteLine("                       O    O");
-                Console.WriteLine("                        \\  /");
-                Console.WriteLine(" ________________________\\/________________________");
-                Console.WriteLine("/                                                  \\");
-                for(int i = 0; i<=7; i++)
+                Console.WriteLine("                               O    O");
+                Console.WriteLine("                                \\  /");
+                Console.WriteLine(" ________________________________\\/________________________________");
+                Console.WriteLine("/                                                                  \\");
+                for(int i = 0; i<=8; i++)
                 {
-                    Console.WriteLine("|                                                  |");
+                    Console.WriteLine("|                                                                  |");
                 }
-                Console.WriteLine("\\__________________________________________________/");
+                Console.WriteLine("\\__________________________________________________________________/");
+            }
+        }
+
+        private void WriteInverted(string word)
+        {
+            var currentForeground = Console.ForegroundColor;
+            var currentBackground = Console.BackgroundColor;
+            Console.ForegroundColor = currentBackground;
+            Console.BackgroundColor = currentForeground;
+            Console.Write(word);
+            Console.ForegroundColor = currentForeground;
+            Console.BackgroundColor = currentBackground;
+        }
+
+        private void WriteMenuOption()
+        {
+            int selected = _menus.SelectedOption;
+            string[] options = _menus.MenuPrintableOptions;
+            for(int i=0; i<options.Length; i++)
+            {
+                if(i==selected){WriteInverted(options[i]);}
+                else{Console.Write(options[i]);}
+                if(i<options.Length-1){Console.Write(" ");}
             }
         }
     }
