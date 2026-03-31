@@ -135,7 +135,8 @@ namespace RemoteControlProject
         }
         public override void Reset()
         {
-            MenuOptionValues[0] = 0;
+            int inputsIndex = this.MenuOptions.IndexOf(RemoteControlProject.MenuOptions.Input);
+            MenuOptionValues[inputsIndex] = 0;
         }
     }
 
@@ -226,7 +227,10 @@ namespace RemoteControlProject
         }
         public void TvTime()
         {
-            menus[(int)MenuTypes.Smart].Reset();
+            foreach (var menu in menus)
+            {
+                menu.Reset();
+            }
         }
 
         public string[] SettingsValues()
