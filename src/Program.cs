@@ -9,7 +9,7 @@ namespace RemoteControlProject
             Console.ForegroundColor = ConsoleColor.White;
             ConsoleKeyInfo keyinfo;
             Remote remote = new();
-            Screen screen = new Screen(remote);
+            Screen screen = new(remote);
             IPrintable[] printables = [screen, remote];
             bool exit = false;
 
@@ -91,6 +91,9 @@ namespace RemoteControlProject
                             break;
                         case ConsoleKey.RightArrow:
                             remote.DPadRight();
+                            break;
+                        case ConsoleKey.Backspace:
+                            remote.BackButton();
                             break;
                     }
                 }

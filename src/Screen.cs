@@ -181,6 +181,9 @@ namespace RemoteControlProject
                 case ButtonType.DPadDown:
                     _menus.OptionDecrement();
                     break;
+                case ButtonType.Back:
+                    _menus.CloseMenu();
+                    break;
                 }
                 if (_interimChannelValue.Length >= 3)
             {

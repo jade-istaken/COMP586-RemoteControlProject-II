@@ -132,6 +132,11 @@ namespace RemoteControlProject
             _lastPressedButton=ButtonType.Settings;
             OnButtonPress(ButtonType.Settings);
         }
+        public void BackButton()
+        {
+            _lastPressedButton=ButtonType.Back;
+            OnButtonPress(ButtonType.Back);
+        }
         protected virtual void OnButtonPress(ButtonType button)
         {
             _inputTimer.Stop();
@@ -154,7 +159,7 @@ namespace RemoteControlProject
             Console.Write("|  "); WriteButton(ButtonType.Settings,"⚙"); Console.Write("   "); WriteButton(ButtonType.Menu,"S"); Console.WriteLine("  |");
             Console.Write("|    "); WriteButton(ButtonType.DPadUp,"↑"); Console.WriteLine("    |");
             Console.Write("|  "); WriteButton(ButtonType.DPadLeft,"←"); Console.Write("   "); WriteButton(ButtonType.DPadRight,"→"); Console.WriteLine("  |");
-            Console.Write("|    "); WriteButton(ButtonType.DPadDown,"↓"); Console.WriteLine("    |");
+            Console.Write("|  "); WriteButton(ButtonType.Back, "↲"); Console.Write(" "); WriteButton(ButtonType.DPadDown,"↓"); Console.WriteLine("    |");
             Console.WriteLine("|         |");
             Console.WriteLine("'-=======-'");
 
@@ -209,6 +214,7 @@ namespace RemoteControlProject
         DPadUp,
         DPadDown,
         DPadLeft,
-        DPadRight
+        DPadRight,
+        Back
     }
 }
