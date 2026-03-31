@@ -30,10 +30,10 @@ namespace RemoteControlProject
         private bool _isMuted = false;
         private bool _captionsEnabled = false;
         private string _interimChannelValue ="";
-        private readonly Remote remote;
+        //private readonly Remote remote;
         public Screen(Remote remote)
         {
-            this.remote = remote;
+            //this.remote = remote;
             remote.ButtonPressed += new EventHandler<ButtonType>(Remote_ButtonPress);
             _menus = new MenuFacade();
             _channelTimoutTimer = new System.Timers.Timer(2000);
