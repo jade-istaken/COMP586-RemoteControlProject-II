@@ -52,11 +52,17 @@ namespace RemoteControlProject
         }
         private void VolumeIncrement()
         {
-            Volume++;
+            if (!_isMuted)
+            {
+                Volume++;
+            }
         }
         private void VolumeDecrement()
         {
-            Volume--;
+            if (!_isMuted)
+            {
+                Volume--;
+            }
         }
         private void ChannelIncrement()
         {
@@ -206,7 +212,7 @@ namespace RemoteControlProject
                 Console.Write("/");
                     if(smartValues.All(x => x == "Disabled")&settingsValues[0]=="Antenna"){Console.WriteLine("Channel:{0}"+"\\".PadLeft(tvLength-12), this.Channel.ToString().PadRight(3));}
                     else {Console.WriteLine("\\".PadLeft(tvLength-1));}
-                Console.WriteLine("|Volume:{0}|",(this._isMuted)? "MUTED".PadRight(43): this.Volume.ToString().PadRight(59));
+                Console.WriteLine("|Volume:{0}|",(this._isMuted)? "MUTED".PadRight(59): this.Volume.ToString().PadRight(59));
                 if(smartValues.All(x => x == "Disabled")){Console.WriteLine("|Input:{0}|",settingsValues[0].PadRight(60));}
                 else
                 {
