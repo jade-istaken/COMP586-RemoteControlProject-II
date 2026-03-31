@@ -9,7 +9,7 @@ namespace RemoteControlProject
             _inputTimer.Elapsed+=new ElapsedEventHandler(StateReset);
         }
         private ButtonType _lastPressedButton = ButtonType.None;
-        public EventHandler<RemoteControlProject.ButtonType>? ButtonPressed;
+        public EventHandler<ButtonType>? ButtonPressed;
         private readonly System.Timers.Timer _inputTimer;
 
         private void StateReset(object? sender, ElapsedEventArgs e)
@@ -172,7 +172,7 @@ namespace RemoteControlProject
             }
         }
         
-        private void WriteInverted(string word)
+        private static void WriteInverted(string word)
         {
             var currentForeground = Console.ForegroundColor;
             var currentBackground = Console.BackgroundColor;
