@@ -5,139 +5,137 @@ namespace RemoteControlProject
     {
         public Remote()
         {
-            this.inputTimer = new System.Timers.Timer(200);
-            inputTimer.Elapsed+=new ElapsedEventHandler(StateReset);
+            this._inputTimer = new System.Timers.Timer(200);
+            _inputTimer.Elapsed+=new ElapsedEventHandler(StateReset);
         }
-        private ButtonType lastPressedButton = ButtonType.None;
+        private ButtonType _lastPressedButton = ButtonType.None;
         public EventHandler<RemoteControlProject.ButtonType>? ButtonPressed;
-        private readonly System.Timers.Timer inputTimer;
+        private readonly System.Timers.Timer _inputTimer;
 
         private void StateReset(object? sender, ElapsedEventArgs e)
         {
-            this.lastPressedButton = ButtonType.None;
+            this._lastPressedButton = ButtonType.None;
         }
         public void PowerButton()
         {
-            lastPressedButton = ButtonType.Power;
+            _lastPressedButton = ButtonType.Power;
             OnButtonPress(ButtonType.Power);
         }
         public void VolumeUp()
         {
-            lastPressedButton = ButtonType.VolumeUp;
+            _lastPressedButton = ButtonType.VolumeUp;
             OnButtonPress(ButtonType.VolumeUp);
         }
         public void VolumeDown()
         {
-            lastPressedButton=ButtonType.VolumeDown;
+            _lastPressedButton=ButtonType.VolumeDown;
             OnButtonPress(ButtonType.VolumeDown);
         }
         public void MuteButton()
         {
-            lastPressedButton=ButtonType.Mute;
+            _lastPressedButton=ButtonType.Mute;
             OnButtonPress(ButtonType.Mute);
         }
         public void CaptionButton()
         {
-            lastPressedButton=ButtonType.Caption;
+            _lastPressedButton=ButtonType.Caption;
             OnButtonPress(ButtonType.Caption);
         }
         public void ChannelUp()
         {
-            lastPressedButton=ButtonType.ChannelUp;
+            _lastPressedButton=ButtonType.ChannelUp;
             OnButtonPress(ButtonType.ChannelUp);
         }
         public void ChannelDown()
         {
-            lastPressedButton=ButtonType.ChannelDown;
+            _lastPressedButton=ButtonType.ChannelDown;
             OnButtonPress(ButtonType.ChannelDown);
         }
         public void ButtonOne()
         {
-            lastPressedButton=ButtonType.One;
+            _lastPressedButton=ButtonType.One;
             OnButtonPress(ButtonType.One);
         }
         public void ButtonTwo()
         {
-            lastPressedButton=ButtonType.Two;
+            _lastPressedButton=ButtonType.Two;
             OnButtonPress(ButtonType.Two);
         }
         public void ButtonThree()
         {
-            lastPressedButton=ButtonType.Three;
+            _lastPressedButton=ButtonType.Three;
             OnButtonPress(ButtonType.Three);
         }
         public void ButtonFour()
         {
-            lastPressedButton=ButtonType.Four;
+            _lastPressedButton=ButtonType.Four;
             OnButtonPress(ButtonType.Four);
         }
         public void ButtonFive()
         {
-            lastPressedButton=ButtonType.Five;
+            _lastPressedButton=ButtonType.Five;
             OnButtonPress(ButtonType.Five);
         }
         public void ButtonSix()
         {
-            lastPressedButton=ButtonType.Six;
+            _lastPressedButton=ButtonType.Six;
             OnButtonPress(ButtonType.Six);
         }
         public void ButtonSeven()
         {
-            lastPressedButton=ButtonType.Seven;
+            _lastPressedButton=ButtonType.Seven;
             OnButtonPress(ButtonType.Seven);
         }
         public void ButtonEight()
         {
-            lastPressedButton=ButtonType.Eight;
+            _lastPressedButton=ButtonType.Eight;
             OnButtonPress(ButtonType.Eight);
         }
         public void ButtonNine()
         {
-            lastPressedButton=ButtonType.Nine;
+            _lastPressedButton=ButtonType.Nine;
             OnButtonPress(ButtonType.Nine);
         }
         public void ButtonZero()
         {
-            lastPressedButton=ButtonType.Zero;
+            _lastPressedButton=ButtonType.Zero;
             OnButtonPress(ButtonType.Zero);
         }
 
         public void DPadUp()
         {
-            // Console.WriteLine("Sent Up");
-            lastPressedButton=ButtonType.DPadUp;
+            _lastPressedButton=ButtonType.DPadUp;
             OnButtonPress(ButtonType.DPadUp);
         }
         public void DPadDown()
         {
-            // Console.WriteLine("Sent Down");
-            lastPressedButton=ButtonType.DPadDown;
+            _lastPressedButton=ButtonType.DPadDown;
             OnButtonPress(ButtonType.DPadDown);
         }
         public void DPadLeft()
         {
-            lastPressedButton=ButtonType.DPadLeft;
+            _lastPressedButton=ButtonType.DPadLeft;
             OnButtonPress(ButtonType.DPadLeft);
         }
         public void DPadRight()
         {
-            lastPressedButton=ButtonType.DPadRight;
+            _lastPressedButton=ButtonType.DPadRight;
             OnButtonPress(ButtonType.DPadRight);
         }
         public void MenuButton()
         {
-            lastPressedButton=ButtonType.Menu;
+            _lastPressedButton=ButtonType.Menu;
             OnButtonPress(ButtonType.Menu);
         }
         public void SettingsButton()
         {
-            lastPressedButton=ButtonType.Settings;
+            _lastPressedButton=ButtonType.Settings;
             OnButtonPress(ButtonType.Settings);
         }
-        protected virtual void OnButtonPress(RemoteControlProject.ButtonType button)
+        protected virtual void OnButtonPress(ButtonType button)
         {
-            inputTimer.Stop();
-            inputTimer.Start();
+            _inputTimer.Stop();
+            _inputTimer.Start();
             ButtonPressed?.Invoke(this, button);
         }
 
@@ -145,26 +143,26 @@ namespace RemoteControlProject
         {
             //This all prints out an ASCII art representation of a TV remote that reacts to button presses
             Console.WriteLine(".-=======-.");
-            Console.Write("| "); writeButton(ButtonType.Power,"P"); Console.WriteLine("       |");
-            Console.Write("|  "); writeButton(ButtonType.One,"1"); Console.Write(" "); writeButton(ButtonType.Two,"2");  Console.Write(" "); writeButton(ButtonType.Three,"3"); Console.WriteLine("  |");
-            Console.Write("|  "); writeButton(ButtonType.Four,"4"); Console.Write(" "); writeButton(ButtonType.Five,"5");  Console.Write(" "); writeButton(ButtonType.Six,"6"); Console.WriteLine("  |");
-            Console.Write("|  "); writeButton(ButtonType.Seven,"7"); Console.Write(" "); writeButton(ButtonType.Eight,"8");  Console.Write(" "); writeButton(ButtonType.Nine,"9"); Console.WriteLine("  |");
-            Console.Write("|    "); writeButton(ButtonType.Zero,"0"); Console.WriteLine("    |");
-            Console.Write("|  "); writeButton(ButtonType.VolumeUp,"+"); Console.Write(" "); writeButton(ButtonType.Mute,"M");  Console.Write(" "); writeButton(ButtonType.ChannelUp,"^"); Console.WriteLine("  |");
+            Console.Write("| "); WriteButton(ButtonType.Power,"P"); Console.WriteLine("       |");
+            Console.Write("|  "); WriteButton(ButtonType.One,"1"); Console.Write(" "); WriteButton(ButtonType.Two,"2");  Console.Write(" "); WriteButton(ButtonType.Three,"3"); Console.WriteLine("  |");
+            Console.Write("|  "); WriteButton(ButtonType.Four,"4"); Console.Write(" "); WriteButton(ButtonType.Five,"5");  Console.Write(" "); WriteButton(ButtonType.Six,"6"); Console.WriteLine("  |");
+            Console.Write("|  "); WriteButton(ButtonType.Seven,"7"); Console.Write(" "); WriteButton(ButtonType.Eight,"8");  Console.Write(" "); WriteButton(ButtonType.Nine,"9"); Console.WriteLine("  |");
+            Console.Write("|    "); WriteButton(ButtonType.Zero,"0"); Console.WriteLine("    |");
+            Console.Write("|  "); WriteButton(ButtonType.VolumeUp,"+"); Console.Write(" "); WriteButton(ButtonType.Mute,"M");  Console.Write(" "); WriteButton(ButtonType.ChannelUp,"^"); Console.WriteLine("  |");
             Console.WriteLine("|  V   C  |");
-            Console.Write("|  "); writeButton(ButtonType.VolumeDown,"-"); Console.Write(" "); writeButton(ButtonType.Caption,"©");  Console.Write(" "); writeButton(ButtonType.ChannelDown,"⌄"); Console.WriteLine("  |");
-            Console.Write("|  "); writeButton(ButtonType.Settings,"⚙"); Console.Write("   "); writeButton(ButtonType.Menu,"S"); Console.WriteLine("  |");
-            Console.Write("|    "); writeButton(ButtonType.DPadUp,"↑"); Console.WriteLine("    |");
-            Console.Write("|  "); writeButton(ButtonType.DPadLeft,"←"); Console.Write("   "); writeButton(ButtonType.DPadRight,"→"); Console.WriteLine("  |");
-            Console.Write("|    "); writeButton(ButtonType.DPadDown,"↓"); Console.WriteLine("    |");
+            Console.Write("|  "); WriteButton(ButtonType.VolumeDown,"-"); Console.Write(" "); WriteButton(ButtonType.Caption,"©");  Console.Write(" "); WriteButton(ButtonType.ChannelDown,"⌄"); Console.WriteLine("  |");
+            Console.Write("|  "); WriteButton(ButtonType.Settings,"⚙"); Console.Write("   "); WriteButton(ButtonType.Menu,"S"); Console.WriteLine("  |");
+            Console.Write("|    "); WriteButton(ButtonType.DPadUp,"↑"); Console.WriteLine("    |");
+            Console.Write("|  "); WriteButton(ButtonType.DPadLeft,"←"); Console.Write("   "); WriteButton(ButtonType.DPadRight,"→"); Console.WriteLine("  |");
+            Console.Write("|    "); WriteButton(ButtonType.DPadDown,"↓"); Console.WriteLine("    |");
             Console.WriteLine("|         |");
             Console.WriteLine("'-=======-'");
 
         }
 
-        private void writeButton(ButtonType button, string output)
+        private void WriteButton(ButtonType button, string output)
         {
-            if (this.lastPressedButton == button)
+            if (this._lastPressedButton == button)
             {
                 WriteInverted(output);
             }
